@@ -29,8 +29,7 @@ export function CORS<S extends Futen>(server: S, policies: CORSHeaders): void {
                 headers: policies
             });
         }
-        const response = (await server.fetch()(request)) as Response;
-        if (response.status === 101) return response; // Websocket upgrade response
+        const response = (await server.fetch()(request, server.instance)) as Response;
         for (const [key, value] of Object.entries(policies)) {
             if (response.headers.has(key)) continue;
             response.headers.set(key, value);
