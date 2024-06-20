@@ -23,18 +23,16 @@ export type CORSHeaders = Partial<{
 }>;
 
 export function CORS<S extends Futen>(server: S, policies: CORSHeaders): void {
-    server.instance.fetch = function (request: Request): Response {
+    server.instance.fetch = async function (request: Request): Promise<Response> {
         if (request.method === 'OPTIONS') {
             return new Response('departed', {
                 headers: policies
             });
         }
-        const response = server.fetch()(request, server.instance) as Response;
-        if (response instanceof Response) {
-            for (const [key, value] of Object.entries(policies)) {
-                if (response.headers.has(key)) continue;
-                response.headers.set(key, value);
-            }
+        const response = await server.fetch()(request, server.instance) as Response;
+        for (const [key, value] of Object.entries(policies)) {
+            if (response.headers.has(key)) continue;
+            response.headers.set(key, value);
         }
         return response;
     };
