@@ -29,7 +29,7 @@ export function CORS<S extends Futen>(server: S, policies: CORSHeaders): void {
                 headers: policies
             });
         }
-        const response = await server.fetch()(request, server.instance) as Response;
+        const response = await server.fetch(server.options)(request, server.instance) as Response;
         for (const [key, value] of Object.entries(policies)) {
             if (response.headers.has(key)) continue;
             response.headers.set(key, value);
